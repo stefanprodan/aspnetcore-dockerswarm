@@ -4,7 +4,7 @@
 if(docker images -q tokengen-img){
     "using existing tokengen image" 
 }else{
-    docker build -t tokengen-img .
+    docker build -t tokengen-img -f TokenGen.dockerfile .
 }
 
 # run container
