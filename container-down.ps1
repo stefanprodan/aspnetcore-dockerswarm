@@ -7,4 +7,4 @@ docker stop tokengen
 docker rm tokengen
 
 # remove image
-docker rmi tokengen-img
+docker rmi -f tokengen-img

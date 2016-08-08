@@ -7,4 +7,4 @@ docker service scale tokengen=0
 docker service rm tokengen
 
 # remove image
-docker rmi tokengen-img
+docker rmi -f tokengen-img
