@@ -1,0 +1,1 @@
+﻿Invoke-RestMethod -Method Get -Headers @{'accept'='application/json'} -Uri http://localhost:5000/api/token
