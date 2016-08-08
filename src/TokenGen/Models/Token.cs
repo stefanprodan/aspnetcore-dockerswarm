@@ -8,7 +8,7 @@ namespace TokenGen.Models
     public class Token
     {
         public string Guid { get; set; }
-        public DateTime ExpireDate { get; set; }
+        public DateTime Expires { get; set; }
         public string Issuer { get; set; }
     }
 }

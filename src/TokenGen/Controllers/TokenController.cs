@@ -16,7 +16,7 @@ namespace TokenGen.Controllers
             return new Token
             {
                 Guid = Guid.NewGuid().ToString(),
-                ExpireDate = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddHours(1),
                 Issuer = Environment.MachineName
             };
         }
