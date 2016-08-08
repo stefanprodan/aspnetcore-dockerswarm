@@ -11,9 +11,9 @@ namespace TokenGen.Controllers
     public class TokenController : Controller
     {
         [HttpGet]
-        public Token Get()
+        public dynamic Get()
         {
-            return new Token
+            return new
             {
                 Guid = Guid.NewGuid().ToString(),
                 Expires = DateTime.UtcNow.AddHours(1),
