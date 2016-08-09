@@ -10,5 +10,6 @@ namespace TokenGen.Models
         public string Guid { get; set; }
         public DateTime Expires { get; set; }
         public string Issuer { get; set; }
+        public string Version { get; set; }
     }
 }

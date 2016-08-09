@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TokenGen.Models;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace TokenGen.Controllers
 {
@@ -13,11 +14,12 @@ namespace TokenGen.Controllers
         [HttpGet]
         public dynamic Get()
         {
-            return new
+            return new Token
             {
                 Guid = Guid.NewGuid().ToString(),
                 Expires = DateTime.UtcNow.AddHours(1),
-                Issuer = Environment.MachineName
+                Issuer = Environment.MachineName,
+                Version = PlatformServices.Default.Application.ApplicationVersion
             };
         }
     }
