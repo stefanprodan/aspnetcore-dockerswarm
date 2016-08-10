@@ -13,7 +13,7 @@ namespace TokenGen
     public class RethinkDbStore
     {
         private static RethinkDB R = RethinkDB.R;
-        private ConnectionPool conn;
+        private Connection conn;
         private string dbName;
 
         public RethinkDbStore(string cluster, string db)
@@ -109,11 +109,11 @@ namespace TokenGen
         {
             if (conn == null)
             {
-                conn = R.ConnectionPool()
-                .Seed(cluster.Split(','))
-                .PoolingStrategy(new RoundRobinHostPool())
-                .Discover(true)
-                .Connect();
+                conn = R.Connection()
+                    .Hostname(cluster.Split(':')[0])
+                    .Port(Convert.ToInt32(cluster.Split(':')[1]))
+                    .Timeout(10)
+                    .Connect();
             }
         }
 
