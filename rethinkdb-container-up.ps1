@@ -1,0 +1,1 @@
+﻿docker run --name rethinkdev -d -p 8080:8080 -p 28015:28015 rethinkdb:latest rethinkdb --bind all --server-name DEV

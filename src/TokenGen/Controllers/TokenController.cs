@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TokenGen.Models;
 using Microsoft.Extensions.PlatformAbstractions;
 
 namespace TokenGen.Controllers
@@ -11,16 +10,39 @@ namespace TokenGen.Controllers
     [Route("api/[controller]")]
     public class TokenController : Controller
     {
-        [HttpGet]
-        public dynamic Get()
+        private RethinkDbStore _store;
+
+        public TokenController(RethinkDbStore store)
         {
-            return new Token
+            _store = store;
+
+            _store.InsertOrUpdateIssuer(new Issuer
             {
-                Guid = Guid.NewGuid().ToString(),
+                Name = Environment.MachineName,
+                Version = PlatformServices.Default.Application.ApplicationVersion,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+
+        [HttpGet]
+        public Token Get()
+        {
+            var token = new Token
+            {
+                Id = Guid.NewGuid().ToString(),
                 Expires = DateTime.UtcNow.AddHours(1),
-                Issuer = Environment.MachineName,
-                Version = PlatformServices.Default.Application.ApplicationVersion
+                Issuer = Environment.MachineName
             };
+
+            _store.InserToken(token);
+
+            return token;
+        }
+
+        [HttpGet("{id}")]
+        public TokenStatus Get(string id)
+        {
+            return _store.GetTokenStatus(id);
         }
     }
 }

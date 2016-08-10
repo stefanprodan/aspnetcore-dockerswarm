@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace TokenGen
 {
-    public class Token
+    public class Issuer
     {
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
-        public DateTime Expires { get; set; }
-        public string Issuer { get; set; }
+        public string Name { get; set; }
+        public string Version { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }
