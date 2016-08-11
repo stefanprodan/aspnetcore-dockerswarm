@@ -32,6 +32,7 @@ namespace TokenGen
             // Add framework services.
             services.AddMvc();
 
+            // RethinkDb connection is thread safe
             services.AddSingleton(new RethinkDbStore());
         }
 
@@ -46,10 +47,14 @@ namespace TokenGen
 
             app.UseMvc();
 
+            // connect to RethinkDb cluster
             var rethinkDbCluster = env.IsDevelopment() ? Configuration["RethinkDbDev"] : Configuration["RethinkDbStaging"];
-
             store.Connect(rethinkDbCluster, Configuration["RethinkDbName"]);
 
+            // create database, tables and indexes if not exists
+            store.ApplySchema();
+
+            // register issuer
             store.InsertOrUpdateIssuer(new Issuer
             {
                 Name = Environment.MachineName,
