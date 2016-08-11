@@ -13,9 +13,6 @@ docker swarm init
 # create network
 docker network create --driver overlay backend-net
 
-# create and start rethinkdb service 
-docker service create --publish 8080:8080 --name rethinkdev --network backend-net rethinkdb:latest rethinkdb --bind all --server-name DEV
-
 # create and start tokengen service
 docker service create --publish 5000:5000 --name tokengen --network backend-net tokengen-img
 
