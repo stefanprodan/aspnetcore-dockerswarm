@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using AspNetCoreRateLimit;
 using RethinkDb.Driver;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace TokenGen
 {
@@ -35,11 +32,11 @@ namespace TokenGen
             // Add framework services.
             services.AddMvc();
 
-            services.AddSingleton(new RethinkDbStore(Configuration["RethinkDbCluster"], Configuration["RethinkDbName"]));
+            services.AddSingleton(new RethinkDbStore());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, RethinkDbStore store)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -48,6 +45,17 @@ namespace TokenGen
             loggerFactory.EnableRethinkDbLogging();
 
             app.UseMvc();
+
+            var rethinkDbCluster = env.IsDevelopment() ? Configuration["RethinkDbDev"] : Configuration["RethinkDbStaging"];
+
+            store.Connect(rethinkDbCluster, Configuration["RethinkDbName"]);
+
+            store.InsertOrUpdateIssuer(new Issuer
+            {
+                Name = Environment.MachineName,
+                Version = PlatformServices.Default.Application.ApplicationVersion,
+                Timestamp = DateTime.UtcNow
+            });
         }
     }
 }

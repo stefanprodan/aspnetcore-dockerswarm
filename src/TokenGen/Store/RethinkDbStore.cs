@@ -16,12 +16,10 @@ namespace TokenGen
         private Connection conn;
         private string dbName;
 
-        public RethinkDbStore(string cluster, string db)
+        public void Connect(string cluster, string db)
         {
             dbName = db;
-
             EnsureConnection(cluster);
-            RunSeed();
         }
 
         public string InsertOrUpdateIssuer(Issuer issuer)
@@ -117,7 +115,7 @@ namespace TokenGen
             }
         }
 
-        public void RunSeed()
+        public void ApplySchema()
         {
             // database
             CreateDb(dbName);

@@ -2,7 +2,7 @@ FROM microsoft/dotnet:latest
 
 # Set environment variables
 ENV ASPNETCORE_URLS="http://*:5000"
-ENV ASPNETCORE_ENVIRONMENT="Development"
+ENV ASPNETCORE_ENVIRONMENT="Staging"
 
 # Copy files to app directory
 COPY /src/TokenGen /app

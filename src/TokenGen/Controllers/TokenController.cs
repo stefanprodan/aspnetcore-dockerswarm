@@ -15,13 +15,6 @@ namespace TokenGen.Controllers
         public TokenController(RethinkDbStore store)
         {
             _store = store;
-
-            _store.InsertOrUpdateIssuer(new Issuer
-            {
-                Name = Environment.MachineName,
-                Version = PlatformServices.Default.Application.ApplicationVersion,
-                Timestamp = DateTime.UtcNow
-            });
         }
 
         [HttpGet]
