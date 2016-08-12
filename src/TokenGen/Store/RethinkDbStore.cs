@@ -128,6 +128,9 @@ namespace TokenGen
             CreateIndex(dbName, nameof(Token), nameof(Token.Issuer));
             CreateIndex(dbName, nameof(Issuer), nameof(Issuer.Name));
 
+            // configure shards and replicas for each table
+            R.Db(dbName).Table(nameof(Token)).Reconfigure().OptArg("shards", 1).OptArg("replicas", 2).Run(conn);
+            R.Db(dbName).Table(nameof(Issuer)).Reconfigure().OptArg("shards", 1).OptArg("replicas", 2).Run(conn);
         }
 
         protected void CreateDb(string dbName)
