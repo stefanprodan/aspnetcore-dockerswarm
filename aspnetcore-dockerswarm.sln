@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "TokenGen", "src\TokenGen\TokenGen.xproj", "{494BE48B-EADE-4791-B380-9A611EEC5AD8}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RethinkDbLogProvider", "src\RethinkDbLogProvider\RethinkDbLogProvider.xproj", "{35E8A145-382E-4D59-936B-2834A9CED1DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,11 +24,16 @@ Global
 		{494BE48B-EADE-4791-B380-9A611EEC5AD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{494BE48B-EADE-4791-B380-9A611EEC5AD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{494BE48B-EADE-4791-B380-9A611EEC5AD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35E8A145-382E-4D59-936B-2834A9CED1DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35E8A145-382E-4D59-936B-2834A9CED1DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35E8A145-382E-4D59-936B-2834A9CED1DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35E8A145-382E-4D59-936B-2834A9CED1DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{494BE48B-EADE-4791-B380-9A611EEC5AD8} = {4DFB6013-EC7C-49D7-BB08-DCF4237D580D}
+		{35E8A145-382E-4D59-936B-2834A9CED1DB} = {4DFB6013-EC7C-49D7-BB08-DCF4237D580D}
 	EndGlobalSection
 EndGlobal

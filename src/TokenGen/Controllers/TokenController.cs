@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.Extensions.Logging;
 
 namespace TokenGen.Controllers
 {
@@ -11,15 +12,20 @@ namespace TokenGen.Controllers
     public class TokenController : Controller
     {
         private RethinkDbStore _store;
+        private ILogger<TokenController> _logger;
 
-        public TokenController(RethinkDbStore store)
+        public TokenController(RethinkDbStore store, ILogger<TokenController> logger)
         {
             _store = store;
+            _logger = logger;
         }
 
         [HttpGet]
         public Token Get()
         {
+            _logger.LogInformation("Info");
+            _logger.LogWarning(new EventId(1, "TestEvent"), new Exception("Some ex"), "some message");
+
             var token = new Token
             {
                 Id = Guid.NewGuid().ToString(),

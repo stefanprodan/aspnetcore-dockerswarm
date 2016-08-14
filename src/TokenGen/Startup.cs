@@ -6,13 +6,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RethinkDb.Driver;
 using Microsoft.Extensions.PlatformAbstractions;
+using RethinkDbLogProvider;
 
 namespace TokenGen
 {
     public class Startup
     {
+        private IHostingEnvironment _env;
+
         public Startup(IHostingEnvironment env)
         {
+            _env = env;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -34,16 +39,24 @@ namespace TokenGen
 
             // RethinkDb connection is thread safe
             services.AddSingleton(new RethinkDbStore());
+
+            services.Configure<RethinkDbOptions>(Configuration.GetSection("RethinkDbLogging"));
+            services.AddSingleton<IRethinkDbConnectionFactory, RethinkDbConnectionFactory>();
+            services.AddSingleton<IRethinkDbLoggerService, RethinkDbLoggerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, RethinkDbStore store)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, RethinkDbStore store, IRethinkDbLoggerService rethinkDbLoggerService)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            rethinkDbLoggerService.ApplySchema();
+
+            loggerFactory.AddRethinkDb(rethinkDbLoggerService, LogLevel.Information);
+
             // enable RethinkDb logging 
-            loggerFactory.EnableRethinkDbLogging();
+            //loggerFactory.EnableRethinkDbLogging();
 
             app.UseMvc();
 
