@@ -12,7 +12,9 @@ namespace RethinkDbLogProvider
         private string _hostName;
         private string _categoryName;
         private Func<string, LogLevel, bool> _filter;
+        private readonly IRethinkDbLoggerService _service;
 
+        public RethinkDbLogger(string categoryName, Func<string, LogLevel, bool> filter, IRethinkDbLoggerService service)
         {
             _categoryName = categoryName;
             _filter = filter;

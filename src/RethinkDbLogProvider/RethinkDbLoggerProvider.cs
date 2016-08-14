@@ -9,7 +9,9 @@ namespace RethinkDbLogProvider
     public class RethinkDbLoggerProvider : ILoggerProvider
     {
         private readonly Func<string, LogLevel, bool> _filter;
+        private readonly IRethinkDbLoggerService _service;
 
+        public RethinkDbLoggerProvider(Func<string, LogLevel, bool> filter, IRethinkDbLoggerService service)
         {
             _service = service;
             _filter = filter;
@@ -22,6 +24,7 @@ namespace RethinkDbLogProvider
 
         public void Dispose()
         {
+            _service.CloseConnection();
         }
     }
 }
