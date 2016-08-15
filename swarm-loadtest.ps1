@@ -3,13 +3,17 @@
 
     $array = 1..$Iterations
 
+    $startTime = get-date
+
     foreach -Parallel -ThrottleLimit 10 ($i in $array){
-        Invoke-RestMethod http://10.0.75.2:5000/api/token
+        Invoke-RestMethod http://localhost:5000/api/token
     }
+
+    "elapsed time " + ((get-date) - $startTime).TotalSeconds + "sec"
+
+    # display load 
+    Invoke-RestMethod http://localhost:5000/api/issuer
 }
 
 # run load test
-loadtest 1000
-
-# display issuers load 
-# Invoke-RestMethod http://10.0.75.2:5000/api/issuer
+loadtest 500
