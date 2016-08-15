@@ -43,7 +43,7 @@ namespace RethinkDbLogProvider
 
         public void CloseConnection()
         {
-            if (conn != null && !conn.Open)
+            if (conn != null && conn.Open)
             {
                 conn.Close(false);
             }
