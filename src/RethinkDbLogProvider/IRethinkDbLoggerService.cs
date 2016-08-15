@@ -9,6 +9,6 @@ namespace RethinkDbLogProvider
     {
         void ApplySchema();
         void CloseConnection();
-        void Log(string appName, string hostName, string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception);
+        void Log(string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception);
     }
 }

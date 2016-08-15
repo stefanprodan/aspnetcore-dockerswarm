@@ -18,5 +18,6 @@ namespace RethinkDbLogProvider
         public string Event { get; set; }
         public string Message { get; set; }
         public string ExceptionId { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

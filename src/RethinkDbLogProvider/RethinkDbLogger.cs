@@ -8,8 +8,6 @@ namespace RethinkDbLogProvider
 {
     public class RethinkDbLogger: ILogger
     {
-        private string _appName;
-        private string _hostName;
         private string _categoryName;
         private Func<string, LogLevel, bool> _filter;
         private readonly IRethinkDbLoggerService _service;
@@ -50,7 +48,7 @@ namespace RethinkDbLogProvider
                 return;
             }
 
-            _service.Log(_appName, _hostName,_categoryName, logLevel.ToString(), eventId.Id, eventId.Name, message, exception);
+            _service.Log(_categoryName, logLevel.ToString(), eventId.Id, eventId.Name, message, exception);
         }
     }
 }

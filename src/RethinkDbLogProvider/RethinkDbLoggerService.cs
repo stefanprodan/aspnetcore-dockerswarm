@@ -18,10 +18,10 @@ namespace RethinkDbLogProvider
         public RethinkDbLoggerService(IRethinkDbConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
-            _dbName = connectionFactory.GetOptions().Database;
+            _dbName = _connectionFactory.GetOptions().Database;
         }
 
-        public void Log(string appName, string hostName, string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception)
+        public void Log(string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception)
         {
             var conn = _connectionFactory.CreateConnection();
             string exceptionId = null;
@@ -38,14 +38,15 @@ namespace RethinkDbLogProvider
 
             var logEntry = new LogEntry
             {
-                Application = appName,
+                Application = _connectionFactory.GetOptions().Application,
                 Category = categoryName,
                 Event = eventName,
                 EventId = eventId,
                 ExceptionId = exceptionId,
-                Host = hostName,
+                Host = Environment.MachineName,
                 Level = logLevel,
-                Message = message
+                Message = message,
+                Timestamp = DateTime.UtcNow
             };
 
             R.Db(_dbName).Table(LogTable)
@@ -65,6 +66,7 @@ namespace RethinkDbLogProvider
             // indexes
             CreateIndex(_dbName, LogTable, nameof(LogEntry.EventId));
             CreateIndex(_dbName, LogTable, nameof(LogEntry.Application));
+            CreateIndex(_dbName, LogTable, nameof(LogEntry.Timestamp));
         }
 
         protected void CreateDb(string dbName)
