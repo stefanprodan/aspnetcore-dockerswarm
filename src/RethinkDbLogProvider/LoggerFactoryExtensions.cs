@@ -3,7 +3,7 @@ using System;
 
 namespace RethinkDbLogProvider
 {
-    public static class Extensions
+    public static class LoggerFactoryExtensions
     {
         public static ILoggerFactory AddRethinkDb(this ILoggerFactory factory, 
             IRethinkDbLoggerService service, 

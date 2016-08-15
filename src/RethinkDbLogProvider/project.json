@@ -1,6 +1,7 @@
 {
   "version": "1.0.0-*",
-
+  "description": "RethinkDB Logging Provider for .NET Core",
+  "authors": [ "Stefan Prodan" ],
   "dependencies": {
     "Microsoft.Extensions.Options": "1.0.0",
     "NETStandard.Library": "1.6.0",
@@ -10,6 +11,8 @@
   "frameworks": {
     "netstandard1.6": {
       "imports": "dnxcore50"
+    },
+    "net45": {
     }
   }
 }
