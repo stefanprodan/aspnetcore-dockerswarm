@@ -34,37 +34,41 @@ namespace TokenGen
             services.AddOptions();
             services.AddMemoryCache();
 
-            // Add framework services.
             services.AddMvc();
 
-            // RethinkDb connection is thread safe
-            services.AddSingleton(new RethinkDbStore());
-
-            services.Configure<RethinkDbOptions>(Configuration.GetSection("RethinkDbLogging"));
+            // add RethinkDB logger service
+            if (_env.IsDevelopment())
+            {
+                services.Configure<RethinkDbOptions>(Configuration.GetSection("RethinkDbDev"));
+            }
+            else
+            {
+                services.Configure<RethinkDbOptions>(Configuration.GetSection("RethinkDbStaging"));
+            }
             services.AddSingleton<IRethinkDbConnectionFactory, RethinkDbConnectionFactory>();
             services.AddSingleton<IRethinkDbLoggerService, RethinkDbLoggerService>();
+
+            // add RethinkDB store service  
+            services.AddSingleton<IRethinkDbStore, RethinkDbStore>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, RethinkDbStore store, IRethinkDbLoggerService rethinkDbLoggerService)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, 
+            IRethinkDbLoggerService rethinkDbLoggerService, 
+            IRethinkDbStore store)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            // create log database, tables and indexes if not exists
             rethinkDbLoggerService.ApplySchema();
 
-            loggerFactory.AddRethinkDb(rethinkDbLoggerService, LogLevel.Information);
-
             // enable RethinkDb logging 
-            //loggerFactory.EnableRethinkDbLogging();
+            loggerFactory.AddRethinkDb(rethinkDbLoggerService, LogLevel.Information);
 
             app.UseMvc();
 
-            // connect to RethinkDb cluster
-            var rethinkDbCluster = env.IsDevelopment() ? Configuration["RethinkDbDev"] : Configuration["RethinkDbStaging"];
-            store.Connect(rethinkDbCluster, Configuration["RethinkDbName"]);
-
-            // create database, tables and indexes if not exists
+            // create TokenStore database, tables and indexes if not exists
             store.ApplySchema();
 
             // register issuer

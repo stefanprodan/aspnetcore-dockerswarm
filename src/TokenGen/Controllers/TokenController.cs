@@ -11,10 +11,10 @@ namespace TokenGen.Controllers
     [Route("api/[controller]")]
     public class TokenController : Controller
     {
-        private RethinkDbStore _store;
+        private IRethinkDbStore _store;
         private ILogger<TokenController> _logger;
 
-        public TokenController(RethinkDbStore store, ILogger<TokenController> logger)
+        public TokenController(IRethinkDbStore store, ILogger<TokenController> logger)
         {
             _store = store;
             _logger = logger;

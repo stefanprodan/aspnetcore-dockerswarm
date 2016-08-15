@@ -10,9 +10,9 @@ namespace TokenGen.Controllers
     [Route("api/[controller]")]
     public class IssuerController : Controller
     {
-        private RethinkDbStore _store;
+        private IRethinkDbStore _store;
 
-        public IssuerController(RethinkDbStore store)
+        public IssuerController(IRethinkDbStore store)
         {
             _store = store;
         }
