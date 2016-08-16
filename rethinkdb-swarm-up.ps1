@@ -15,3 +15,11 @@ Start-Sleep -s 5
 
 # up 3 nodes to enable automatic failover
 docker service scale rdb-secondary=2
+
+Start-Sleep -s 5
+
+# remove primary
+docker service rm rdb-primary
+
+# recreate primary with --join flag
+docker service create --name rdb-primary --network backend-net rethinkdb:latest rethinkdb --bind all --no-http-admin --join rdb-secondary
