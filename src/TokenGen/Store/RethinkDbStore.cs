@@ -181,5 +181,16 @@ namespace TokenGen
             }
         }
 
+        public void Reconfigure(int shards, int replicas)
+        {
+            var conn = _connectionFactory.CreateConnection();
+            var tables = R.Db(_dbName).TableList().Run(conn);
+            foreach (string table in tables)
+            {
+                R.Db(_dbName).Table(table).Reconfigure().OptArg("shards", shards).OptArg("replicas", replicas).Run(conn);
+                R.Db(_dbName).Table(table).Wait_().Run(conn);
+            }
+        }
+
     }
 }

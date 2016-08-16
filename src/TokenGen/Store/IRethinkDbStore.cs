@@ -9,5 +9,6 @@ namespace TokenGen
         TokenStatus GetTokenStatus(string tokenId);
         void InserToken(Token token);
         string InsertOrUpdateIssuer(Issuer issuer);
+        void Reconfigure(int shards, int replicas);
     }
 }
