@@ -61,7 +61,7 @@ namespace TokenGen
             loggerFactory.AddDebug();
 
             // create log database, tables and indexes if not exists
-            rethinkDbLoggerService.ApplySchema();
+            rethinkDbLoggerService.InitializeDatabase();
 
             // enable RethinkDb logging 
             loggerFactory.AddRethinkDb(rethinkDbLoggerService, LogLevel.Information);
@@ -69,7 +69,7 @@ namespace TokenGen
             app.UseMvc();
 
             // create TokenStore database, tables and indexes if not exists
-            store.ApplySchema();
+            store.InitializeDatabase();
 
             // register issuer
             store.InsertOrUpdateIssuer(new Issuer
