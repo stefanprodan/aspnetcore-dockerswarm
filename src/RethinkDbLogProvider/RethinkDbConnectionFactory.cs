@@ -1,9 +1,5 @@
 ﻿using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
 namespace RethinkDbLogProvider

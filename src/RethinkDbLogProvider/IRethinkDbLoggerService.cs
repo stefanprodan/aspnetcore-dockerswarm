@@ -7,7 +7,7 @@ namespace RethinkDbLogProvider
 {
     public interface IRethinkDbLoggerService
     {
-        void ApplySchema();
+        void InitializeDatabase();
         void CloseConnection();
         void Log(string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception);
     }

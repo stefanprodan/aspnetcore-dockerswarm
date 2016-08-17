@@ -54,7 +54,7 @@ namespace RethinkDbLogProvider
                     .RunResult(conn);
         }
 
-        public void ApplySchema()
+        public void InitializeDatabase()
         {
             // database
             CreateDb(_dbName);

@@ -4,7 +4,7 @@ namespace TokenGen
 {
     public interface IRethinkDbStore
     {
-        void ApplySchema();
+        void InitializeDatabase();
         List<IssuerStatus> GetIssuerStatus();
         TokenStatus GetTokenStatus(string tokenId);
         void InserToken(Token token);

@@ -108,7 +108,7 @@ namespace TokenGen
             return tokenStatus;
         }
 
-        public void ApplySchema()
+        public void InitializeDatabase()
         {
             // database
             CreateDb(_dbName);
