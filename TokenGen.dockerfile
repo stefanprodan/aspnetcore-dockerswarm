@@ -5,10 +5,14 @@ ENV ASPNETCORE_URLS="http://*:5000"
 ENV ASPNETCORE_ENVIRONMENT="Staging"
 
 # Copy files to app directory
-COPY /src/TokenGen /app
+COPY . /app
+
+# RethinkDbLogProvider
+WORKDIR /app/src/RethinkDbLogProvider
+RUN ["dotnet", "restore"]
 
 # Set working directory
-WORKDIR /app
+WORKDIR /app/src/TokenGen
 
 # Restore NuGet packages
 RUN ["dotnet", "restore"]
