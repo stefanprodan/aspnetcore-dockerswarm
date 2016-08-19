@@ -3,6 +3,21 @@
 }
 
 <h2>Log</h2>
+
+<table id="logs" class="table table-sm ">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Level</th>
+            <th>Application</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
 <div class="container">
 
     <ul id="discussion"></ul>
@@ -16,10 +31,10 @@
             var chat = $.connection.logHub;
 
             // Create a function that the hub can call back to display messages.
-            chat.client.OnLog = function (timestamp, message) {
-                // Add the message to the page.
-                $('#discussion').append('<li><strong>' + htmlEncode(timestamp)
-                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            chat.client.OnLog = function (timestamp, level, host, application, category, message) {
+
+                $('#logs > tbody:last').prepend('<tr><td>' + timestamp + '</td><td>' + level + '</td><td>' + '<p>' + application + '</p>Host:<em>' + host + '</em></td><td>' + '<p><strong>' + category + '</strong></p>' + message + '</td></tr>');
+
             };
 
             // Start the connection.

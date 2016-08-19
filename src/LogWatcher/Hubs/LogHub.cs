@@ -8,10 +8,6 @@ namespace LogWatcher
 {
     public class LogHub : Hub
     {
-        public void Send(string timestamp, string message)
-        {
-            // Call the addNewMessageToPage method to update clients.
-            Clients.All.OnLog(timestamp, message);
-        }
+
     }
 }
