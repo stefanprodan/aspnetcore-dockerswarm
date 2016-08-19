@@ -43,5 +43,11 @@ namespace TokenGen.Controllers
         {
             return _store.GetTokenStatus(id);
         }
+
+        [Route("[action]/{term}")]
+        public dynamic Search(string term)
+        {
+            return _store.SearchToken(term);
+        }
     }
 }

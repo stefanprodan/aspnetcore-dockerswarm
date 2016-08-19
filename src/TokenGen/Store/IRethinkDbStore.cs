@@ -11,5 +11,6 @@ namespace TokenGen
         void InserToken(Token token);
         string InsertOrUpdateIssuer(Issuer issuer);
         void Reconfigure(int shards, int replicas);
+        List<Token> SearchToken(string querystring);
     }
 }

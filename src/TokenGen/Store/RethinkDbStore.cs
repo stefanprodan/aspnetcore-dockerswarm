@@ -50,6 +50,15 @@ namespace TokenGen
             }
         }
 
+        public List<Token> SearchToken(string querystring)
+        {
+            var conn = _connectionFactory.CreateConnection();
+
+            // case-insensitive search in all Token fields
+            Cursor<Token> all = R.Db(_dbName).Table(nameof(Token)).Filter(t => t.CoerceTo("string").Match($"(?i){querystring}")).RunCursor<Token>(conn);
+            return all.OrderByDescending(f => f.Expires).ToList();
+        }
+
         public List<IssuerStatus> GetTokensCountByIssuer()
         {
             var conn = _connectionFactory.CreateConnection();
