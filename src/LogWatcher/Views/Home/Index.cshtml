@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>Log</h2>
+<div class="container">
+
+    <ul id="discussion"></ul>
+</div>
+
+@section scripts {
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        $(function () {
+            // Reference the auto-generated proxy for the hub.
+            var chat = $.connection.logHub;
+
+            // Create a function that the hub can call back to display messages.
+            chat.client.OnLog = function (timestamp, message) {
+                // Add the message to the page.
+                $('#discussion').append('<li><strong>' + htmlEncode(timestamp)
+                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+
+            });
+        });
+        // This optional function html-encodes messages for display in the page.
+        function htmlEncode(value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }
+    </script>
+}
