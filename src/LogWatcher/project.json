@@ -21,7 +21,8 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
     "Microsoft.AspNetCore.SignalR.Server": "0.1.0-rtm-21431",
-    "RethinkDbLogProvider": "1.0.0-*"
+    "RethinkDbLogProvider": "1.0.0-*",
+    "Microsoft.AspNetCore.WebSockets.Server": "0.1.0"
   },
 
   "tools": {

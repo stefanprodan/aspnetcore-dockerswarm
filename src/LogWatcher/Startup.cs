@@ -80,6 +80,7 @@ namespace LogWatcher
             // run log watcher on a background thread
             Task.Factory.StartNew(logChangeHandler.HandleUpdates, TaskCreationOptions.LongRunning);
 
+            app.UseWebSockets();
             app.UseSignalR();
         }
     }
