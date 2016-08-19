@@ -9,8 +9,10 @@ namespace TokenGen
     public class IssuerStatus
     {
         public string Name { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Version { get; set; }
-        public DateTime RegisterDate { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? RegisterDate { get; set; }
         public long TotalTokensIssued { get; set; }
     }
 }
