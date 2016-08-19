@@ -20,7 +20,7 @@ namespace TokenGen.Controllers
         [HttpGet]
         public dynamic Get()
         {
-            return _store.GetIssuerStatus();
+            return _store.GetTokensCountByIssuer();
         }
     }
 }

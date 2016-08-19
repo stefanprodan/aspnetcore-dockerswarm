@@ -50,6 +50,24 @@ namespace TokenGen
             }
         }
 
+        public List<IssuerStatus> GetTokensCountByIssuer()
+        {
+            var conn = _connectionFactory.CreateConnection();
+
+            var list = R.Db(_dbName).Table(nameof(Token))
+                .Group()[new { index = nameof(Token.Issuer) }]
+                .Count()
+                .RunGrouping<string, long>(conn);
+
+            var issuerReport = list.Select(f => new IssuerStatus
+            {
+                Name = f.Key,
+                TotalTokensIssued = f.Items.First()
+            }).ToList();
+
+            return issuerReport;
+        }
+
         public List<IssuerStatus> GetIssuerStatus()
         {
             var conn = _connectionFactory.CreateConnection();

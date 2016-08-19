@@ -6,6 +6,7 @@ namespace TokenGen
     {
         void InitializeDatabase();
         List<IssuerStatus> GetIssuerStatus();
+        List<IssuerStatus> GetTokensCountByIssuer();
         TokenStatus GetTokenStatus(string tokenId);
         void InserToken(Token token);
         string InsertOrUpdateIssuer(Issuer issuer);
