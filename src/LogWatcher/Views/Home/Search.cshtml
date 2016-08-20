@@ -77,7 +77,7 @@
                 });
             });
             var t1 = performance.now();
-            showAlert(alert, 'Search duration ' + (t1 - t0).toFixed(4) + 'ms');
+            showAlert(alert, 'Search execution time ' + (t1 - t0).toFixed(4) + 'ms');
         });
 
         $(document.body).on('keyup', search.find("input"), function (event) {

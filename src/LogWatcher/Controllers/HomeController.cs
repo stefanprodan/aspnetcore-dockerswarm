@@ -22,5 +22,10 @@ namespace LogWatcher.Controllers
         {
             return View();
         }
+
+        public IActionResult Stats()
+        {
+            return View();
+        }
     }
 }

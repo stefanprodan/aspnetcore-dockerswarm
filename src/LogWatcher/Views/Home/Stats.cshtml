@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Stats";
+}
+
+<h3>Statistics</h3>
+
+<div id="alert" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <p></p>
+</div>
+
+<table id="app" class="table">
+    <thead>
+        <tr>
+            <th>Application</th>
+            <th>Trace</th>
+            <th>Debug</th>
+            <th>Information</th>
+            <th>Warning</th>
+            <th>Error</th>
+            <th>Critical</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<table id="host" class="table">
+    <thead>
+        <tr>
+            <th>Host</th>
+            <th>Trace</th>
+            <th>Debug</th>
+            <th>Information</th>
+            <th>Warning</th>
+            <th>Error</th>
+            <th>Critical</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts {
+
+    <script>
+        $(function () {
+
+            // enable SignalR logging
+            $.connection.hub.logging = true;
+
+            // get generated proxy
+            var logHubProxy = $.connection.logHub;
+
+            var hostTable = $('#host > tbody:last');
+            var appTable = $('#app > tbody:last');
+            var alert = $('#alert');
+
+            // open connection
+            $.connection.hub.start().done(function () {
+                showAlert(alert, 'Connected to SignalR hub, transport ' + $.connection.hub.transport.name);
+
+                var t0 = performance.now();
+                logHubProxy.server.appLogStats().then(function (logs) {
+                    $.each(logs, function (idx, log) {
+                        pushHostStats(appTable, log);
+                    });
+                });
+                logHubProxy.server.hostLogStats().then(function (logs) {
+                    $.each(logs, function (idx, log) {
+                        pushHostStats(hostTable, log);
+                    });
+                });
+
+                var t1 = performance.now();
+                showAlert(alert, 'Stats execution time ' + (t1 - t0).toFixed(4) + 'ms');
+
+            }).fail(function () {
+                showAlert(alert, 'Could not connect to SignalR hub');
+            });
+
+            // alert on slow connection
+            $.connection.hub.connectionSlow(function () {
+                showAlert(alert, 'We are currently experiencing difficulties with the SignalR connection');
+            });
+
+            // alert on connection error
+            $.connection.hub.error(function (error) {
+                showAlert(alert, 'SignalR error: ' + error);
+            });
+        });
+
+        function pushHostStats(table, log) {
+            table.append('<tr><td>' + log.Name + '</td><td>' + log.Trace + '</td><td>' + log.Debug + '</td><td>' + log.Information + '</td><td>' + log.Warning + '</td><td>' + log.Error + '</td><td>' + log.Critical + '</td></tr>');
+        }
+
+        function showAlert(alert, message) {
+            alert.find("p").text(message);
+            alert.show();
+        }
+    </script>
+}
