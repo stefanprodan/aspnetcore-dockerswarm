@@ -29,7 +29,10 @@ namespace LogWatcher
                 .Limit(limit)
                 .RunCursor<LogEntry>(conn);
 
-            return logs;
+            var result = logs.ToList();
+            logs.Close();
+
+            return result;
         }
 
         public dynamic Search(string query, int limit)
@@ -42,7 +45,10 @@ namespace LogWatcher
                 .Limit(limit)
                 .RunCursor<LogEntry>(conn);
 
-            return logs;
+            var result = logs.ToList();
+            logs.Close();
+
+            return result;
         }
     }
 }
