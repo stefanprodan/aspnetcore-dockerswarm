@@ -67,6 +67,7 @@ namespace RethinkDbLogProvider
             CreateIndex(_dbName, LogTable, nameof(LogEntry.EventId));
             CreateIndex(_dbName, LogTable, nameof(LogEntry.Application));
             CreateIndex(_dbName, LogTable, nameof(LogEntry.Timestamp));
+            CreateIndex(_dbName, LogTable, nameof(LogEntry.Host));
         }
 
         protected void CreateDb(string dbName)
