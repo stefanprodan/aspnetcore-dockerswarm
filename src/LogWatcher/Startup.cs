@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RethinkDbLogProvider;
+using RethinkDb.Driver;
 
 namespace LogWatcher
 {
@@ -57,6 +58,9 @@ namespace LogWatcher
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            // enable RethinkDb logging 
+            loggerFactory.EnableRethinkDbLogging();
 
             if (env.IsDevelopment())
             {
