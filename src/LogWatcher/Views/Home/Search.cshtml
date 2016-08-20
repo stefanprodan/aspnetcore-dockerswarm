@@ -4,7 +4,7 @@
 
 <h3>Search in logs</h3>
 
-<div id="alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+<div id="alert" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <p></p>
 </div>
@@ -34,6 +34,9 @@
 @section scripts {
 <script>
     $(function () {
+
+        // enable SignalR logging
+        $.connection.hub.logging = true;
 
         // get generated proxy
         var logHubProxy = $.connection.logHub;
@@ -65,11 +68,16 @@
 
         search.find("button").click(function () {
             var query = search.find("input").val();
-            logHubProxy.server.search(query, 100).then(function (logs) {
+            showAlert(alert, 'Searching...');
+            table.find(`tr`).remove();
+            var t0 = performance.now();
+            logHubProxy.server.search(query, 50).then(function (logs) {
                 $.each(logs, function (idx, log) {
                     pushLog(table, log);
                 });
             });
+            var t1 = performance.now();
+            showAlert(alert, 'Search duration ' + (t1 - t0).toFixed(4) + 'ms');
         });
 
         $(document.body).on('keyup', search.find("input"), function (event) {
@@ -82,7 +90,7 @@
     function pushLog(table, log) {
         var ts = new Date(log.Timestamp);
         table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
-        table.prepend('<tr class="active"><td>' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
+        table.prepend('<tr class="active"><td>' + ts.toLocaleDateString() + ' ' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
     }
 
     function showAlert(alert, message) {
