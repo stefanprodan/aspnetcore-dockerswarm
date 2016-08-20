@@ -31,5 +31,18 @@ namespace LogWatcher
 
             return logs;
         }
+
+        public dynamic Search(string query, int limit)
+        {
+            var conn = _rethinkDbFactory.CreateConnection();
+            var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
+                .Table("Logs")
+                .OrderBy(R.Desc(nameof(LogEntry.Timestamp)))
+                .Filter(t => t.CoerceTo("string").Match($"(?i){query}"))
+                .Limit(limit)
+                .RunResult<List<LogEntry>>(conn);
+
+            return logs;
+        }
     }
 }

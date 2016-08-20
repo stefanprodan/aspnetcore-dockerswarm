@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Search";
+}
+
+<h3>Search in logs</h3>
+
+<div id="alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <p></p>
+</div>
+
+<div id="search" class="input-group">
+    <input type="text" class="form-control" placeholder="Search for...">
+    <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+    </span>
+</div>
+
+<table id="logs" class="table table-borderless">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Level</th>
+            <th>Application</th>
+            <th>Host</th>
+            <th>Category</th>
+            <th>EventId</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+@section scripts {
+<script>
+    $(function () {
+
+        // get generated proxy
+        var logHubProxy = $.connection.logHub;
+
+        var search = $('#search');
+        var table = $('#logs > tbody:last');
+        var alert = $('#alert');
+
+        // open connection
+        $.connection.hub.start().done(function () {
+            logHubProxy.server.load(10).then(function (logs) {
+                $.each(logs, function (idx, log) {
+                    pushLog(table, log);
+                });
+            });
+        }).fail(function () {
+            showAlert(alert, 'Could not connect to SignalR hub');
+        });
+
+        // alert on slow connection
+        $.connection.hub.connectionSlow(function () {
+            showAlert(alert, 'We are currently experiencing difficulties with the SignalR connection');
+        });
+
+        // alert on connection error
+        $.connection.hub.error(function (error) {
+            showAlert(alert, 'SignalR error: ' + error);
+        });
+
+        search.find("button").click(function () {
+            var query = search.find("input").val();
+            logHubProxy.server.search(query, 100).then(function (logs) {
+                $.each(logs, function (idx, log) {
+                    pushLog(table, log);
+                });
+            });
+        });
+
+        $(document.body).on('keyup', search.find("input"), function (event) {
+            if (event.keyCode == 13) {
+                search.find("button").click();
+            }
+        });
+    });
+
+    function pushLog(table, log) {
+        var ts = new Date(log.Timestamp);
+        table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
+        table.prepend('<tr class="active"><td>' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
+    }
+
+    function showAlert(alert, message) {
+        alert.find("p").text(message);
+        alert.show();
+    }
+</script>
+}
