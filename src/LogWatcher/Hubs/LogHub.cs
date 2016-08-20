@@ -25,9 +25,9 @@ namespace LogWatcher
             var conn = _rethinkDbFactory.CreateConnection();
             var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
                 .Table("Logs")
-                .OrderBy(R.Desc(nameof(LogEntry.Timestamp)))
+                .OrderBy()[new { index = R.Asc(nameof(LogEntry.Timestamp)) }]
                 .Limit(limit)
-                .RunResult<List<LogEntry>>(conn);
+                .RunCursor<LogEntry>(conn);
 
             return logs;
         }
@@ -37,10 +37,10 @@ namespace LogWatcher
             var conn = _rethinkDbFactory.CreateConnection();
             var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
                 .Table("Logs")
-                .OrderBy(R.Desc(nameof(LogEntry.Timestamp)))
+                .OrderBy()[new { index = R.Asc(nameof(LogEntry.Timestamp)) }]
                 .Filter(t => t.CoerceTo("string").Match($"(?i){query}"))
                 .Limit(limit)
-                .RunResult<List<LogEntry>>(conn);
+                .RunCursor<LogEntry>(conn);
 
             return logs;
         }
