@@ -30,15 +30,6 @@ namespace LogWatcher
 
             foreach (var log in feed)
             {
-                //hubContext.Clients.All.OnLog(
-                //    log.NewValue.Timestamp.ToString(),
-                //    log.NewValue.Level,
-                //    log.NewValue.Host,
-                //    log.NewValue.Application,
-                //    log.NewValue.Category,
-                //    log.NewValue.Message,
-                //    log.NewValue.EventId);
-
                 hubContext.Clients.All.OnLog(log.NewValue);
             }
         }

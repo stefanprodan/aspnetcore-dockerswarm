@@ -1,52 +1,80 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Log feed";
 }
 
-<h2>Log</h2>
+<h3>Real time log feed</h3>
 
-<table id="logs" class="table table-sm ">
+<div id="alert" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <p></p>
+</div>
+
+<table id="logs" class="table table-borderless">
     <thead>
         <tr>
-            <th>Timestamp</th>
+            <th>Time</th>
             <th>Level</th>
             <th>Application</th>
-            <th>Message</th>
+            <th>Host</th>
+            <th>Category</th>
+            <th>EventId</th>
         </tr>
     </thead>
-    <tbody>
-
-    </tbody>
+    <tbody></tbody>
 </table>
-
-<div class="container">
-
-    <ul id="discussion"></ul>
-</div>
 
 @section scripts {
 
     <script>
         $(function () {
 
-            var hub = $.connection.logHub;
+            // enable SignalR logging
+            $.connection.hub.logging = true;
+
+            // get generated proxy
+            var logHubProxy = $.connection.logHub;
+
             var table = $('#logs > tbody:last');
+            var alert = $('#alert');
 
-
-            hub.client.OnLog = function (log) {
+            // change feed handler
+            logHubProxy.client.OnLog = function (log) {
+                showAlert(alert, 'Log feed last updated at ' + (new Date()).toLocaleTimeString());
                 pushLog(table, log);
             };
 
+            // open connection
             $.connection.hub.start().done(function () {
-                hub.server.load(5).then(function (logs) {
+                showAlert(alert, 'Connected to SignalR hub, transport ' + $.connection.hub.transport.name);
+                logHubProxy.server.load(5).then(function (logs) {
                     $.each(logs, function (idx, log) {
                         pushLog(table, log);
                     });
                 });
+            }).fail(function () {
+                showAlert(alert, 'Could not connect to SignalR hub');
+            });
+
+            // alert on slow connection
+            $.connection.hub.connectionSlow(function () {
+                showAlert(alert, 'We are currently experiencing difficulties with the SignalR connection');
+            });
+
+            // alert on connection error
+            $.connection.hub.error(function (error) {
+                showAlert(alert, 'SignalR error: ' + error);
             });
         });
 
         function pushLog(table, log) {
-            table.prepend('<tr><td>' + log.Timestamp + '</td><td>' + log.Level + '</td><td>' + '<p>' + log.Application + '</p>Host:<em>' + log.Host + '</em></td><td>' + '<p><strong>' + log.Category + '</strong></p>' + log.Message + '</td></tr>');
+            var ts = new Date(log.Timestamp);
+            table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
+            table.prepend('<tr class="active"><td>' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
+        }
+
+        function showAlert(alert, message) {
+            alert.find("p").text(message);
+            alert.show();
         }
     </script>
 }
