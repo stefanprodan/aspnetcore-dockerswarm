@@ -11,33 +11,35 @@ namespace LogWatcher
 {
     public class LogChangeHandler
     {
-        private static IRethinkDbConnectionFactory _connectionFactory;
+        private readonly IRethinkDbConnectionFactory _rethinkDbFactory;
         private static RethinkDB R = RethinkDB.R;
-        private readonly IConnectionManager _connectionManager;
+        private readonly IConnectionManager _signalManager;
 
-        public LogChangeHandler(IRethinkDbConnectionFactory connectionFactory, IConnectionManager connectionManager)
+        public LogChangeHandler(IRethinkDbConnectionFactory rethinkDbFactory, IConnectionManager signalManager)
         {
-            _connectionFactory = connectionFactory;
-            _connectionManager = connectionManager;
+            _rethinkDbFactory = rethinkDbFactory;
+            _signalManager = signalManager;
         }
 
         public void HandleUpdates()
         {
-            IHubContext context = _connectionManager.GetHubContext<LogHub>();
-            IConnection connection = _connectionManager.GetConnectionContext<PersistentConnection>().Connection;
+            var hubContext = _signalManager.GetHubContext<LogHub>();
 
-            var conn = _connectionFactory.CreateConnection();
-            var feed = R.Db(_connectionFactory.GetOptions().Database).Table("Logs").Changes().RunChanges<LogEntry>(conn);
+            var conn = _rethinkDbFactory.CreateConnection();
+            var feed = R.Db(_rethinkDbFactory.GetOptions().Database).Table("Logs").Changes().RunChanges<LogEntry>(conn);
 
             foreach (var log in feed)
             {
-                context.Clients.All.OnLog(
-                    log.NewValue.Timestamp.ToString(),
-                    log.NewValue.Level,
-                    log.NewValue.Host,
-                    log.NewValue.Application,
-                    log.NewValue.Category,
-                    log.NewValue.Message);
+                //hubContext.Clients.All.OnLog(
+                //    log.NewValue.Timestamp.ToString(),
+                //    log.NewValue.Level,
+                //    log.NewValue.Host,
+                //    log.NewValue.Application,
+                //    log.NewValue.Category,
+                //    log.NewValue.Message,
+                //    log.NewValue.EventId);
+
+                hubContext.Clients.All.OnLog(log.NewValue);
             }
         }
     }

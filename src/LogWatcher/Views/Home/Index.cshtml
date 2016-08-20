@@ -24,28 +24,29 @@
 </div>
 
 @section scripts {
-    <!--SignalR script to update the chat page and send messages.-->
+
     <script>
         $(function () {
-            // Reference the auto-generated proxy for the hub.
-            var chat = $.connection.logHub;
 
-            // Create a function that the hub can call back to display messages.
-            chat.client.OnLog = function (timestamp, level, host, application, category, message) {
+            var hub = $.connection.logHub;
+            var table = $('#logs > tbody:last');
 
-                $('#logs > tbody:last').prepend('<tr><td>' + timestamp + '</td><td>' + level + '</td><td>' + '<p>' + application + '</p>Host:<em>' + host + '</em></td><td>' + '<p><strong>' + category + '</strong></p>' + message + '</td></tr>');
 
+            hub.client.OnLog = function (log) {
+                pushLog(table, log);
             };
 
-            // Start the connection.
             $.connection.hub.start().done(function () {
-
+                hub.server.load(5).then(function (logs) {
+                    $.each(logs, function (idx, log) {
+                        pushLog(table, log);
+                    });
+                });
             });
         });
-        // This optional function html-encodes messages for display in the page.
-        function htmlEncode(value) {
-            var encodedValue = $('<div />').text(value).html();
-            return encodedValue;
+
+        function pushLog(table, log) {
+            table.prepend('<tr><td>' + log.Timestamp + '</td><td>' + log.Level + '</td><td>' + '<p>' + log.Application + '</p>Host:<em>' + log.Host + '</em></td><td>' + '<p><strong>' + log.Category + '</strong></p>' + log.Message + '</td></tr>');
         }
     </script>
 }
