@@ -56,7 +56,7 @@
 
             // open connection
             $.connection.hub.start().done(function () {
-                showAlert(alert, 'Connected to SignalR hub, transport ' + $.connection.hub.transport.name);
+                showAlert(alert, 'Connected to SignalR hub via ' + $.connection.hub.transport.name);
 
                 var t0 = performance.now();
                 logHubProxy.server.appLogStats().then(function (logs) {

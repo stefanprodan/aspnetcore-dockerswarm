@@ -36,24 +36,19 @@
 
             // change feed handler
             logHubProxy.client.OnLog = function (log) {
-                showAlert(alert, 'Log feed last updated at ' + (new Date()).toLocaleTimeString());
-                pushLog(table, log);
+                showAlert(alert, 'Last event at ' + (new Date()).toLocaleTimeString());
+                pushNewLog(table, log);
             };
 
             // open connection
             $.connection.hub.start().done(function () {
-                showAlert(alert, 'Connected to SignalR hub, transport ' + $.connection.hub.transport.name);
-                logHubProxy.server.load(5).then(function (logs) {
-                    $.each(logs, function (idx, log) {
-                        pushLog(table, log);
-                    });
-                });
+                showAlert(alert, 'Connected to SignalR hub via ' + $.connection.hub.transport.name + '. Waiting for events...');
             }).fail(function () {
                 showAlert(alert, 'Could not connect to SignalR hub');
             });
         });
 
-        function pushLog(table, log) {
+        function pushNewLog(table, log) {
             var ts = new Date(log.Timestamp);
             table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
             table.prepend('<tr class="active"><td>' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
