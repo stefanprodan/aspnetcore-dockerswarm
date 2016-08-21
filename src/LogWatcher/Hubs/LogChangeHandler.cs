@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace LogWatcher
 {
@@ -14,11 +15,15 @@ namespace LogWatcher
         private readonly IRethinkDbConnectionFactory _rethinkDbFactory;
         private static RethinkDB R = RethinkDB.R;
         private readonly IConnectionManager _signalManager;
+        private readonly ILogger<LogChangeHandler> _logger;
 
-        public LogChangeHandler(IRethinkDbConnectionFactory rethinkDbFactory, IConnectionManager signalManager)
+        public LogChangeHandler(IRethinkDbConnectionFactory rethinkDbFactory, 
+            IConnectionManager signalManager, 
+            ILogger<LogChangeHandler> logger)
         {
             _rethinkDbFactory = rethinkDbFactory;
             _signalManager = signalManager;
+            _logger = logger;
         }
 
         public void HandleUpdates()
@@ -32,6 +37,8 @@ namespace LogWatcher
             {
                 hubContext.Clients.All.OnLog(log.NewValue);
             }
+
+            _logger.LogWarning($"Changefeed stopped, connection is open {conn.Open}");
         }
     }
 }

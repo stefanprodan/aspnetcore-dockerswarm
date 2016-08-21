@@ -50,17 +50,26 @@ namespace LogWatcher
                 services.Configure<RethinkDbOptions>(Configuration.GetSection("RethinkDbStaging"));
             }
             services.AddSingleton<IRethinkDbConnectionFactory, RethinkDbConnectionFactory>();
+            services.AddSingleton<IRethinkDbLoggerService, RethinkDbLoggerService>();
+
+            // register changefeed service
             services.AddSingleton<LogChangeHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, LogChangeHandler logChangeHandler)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, 
+            ILoggerFactory loggerFactory, 
+            IRethinkDbLoggerService rethinkDbLoggerService, 
+            LogChangeHandler logChangeHandler)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            // enable RethinkDb logging 
+            // enable RethinkDb driver logging 
             loggerFactory.EnableRethinkDbLogging();
+
+            // enable RethinkDb log provider for events 
+            loggerFactory.AddRethinkDb(rethinkDbLoggerService, LogLevel.Warning);
 
             if (env.IsDevelopment())
             {
