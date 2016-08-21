@@ -78,8 +78,8 @@
 
     function pushLog(table, log) {
         var ts = new Date(log.Timestamp);
-        table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
-        table.prepend('<tr class="active"><td>' + ts.toLocaleDateString() + ' ' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
+        table.append('<tr><td colspan="6">' + log.Message + '</td><tr>');
+        table.append('<tr class="active"><td>' + ts.toLocaleDateString() + ' ' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
     }
 </script>
 }

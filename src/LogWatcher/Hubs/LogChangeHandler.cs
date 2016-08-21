@@ -38,7 +38,7 @@ namespace LogWatcher
                 hubContext.Clients.All.OnLog(log.NewValue);
             }
 
-            _logger.LogWarning($"Changefeed stopped, connection is open {conn.Open}");
+            _logger.LogCritical($"Changefeed exited, connection is open {conn.Open}");
         }
     }
 }
