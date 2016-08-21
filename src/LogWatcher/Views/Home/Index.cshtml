@@ -28,9 +28,6 @@
     <script>
         $(function () {
 
-            // enable SignalR logging
-            $.connection.hub.logging = true;
-
             // get generated proxy
             var logHubProxy = $.connection.logHub;
 
@@ -54,27 +51,12 @@
             }).fail(function () {
                 showAlert(alert, 'Could not connect to SignalR hub');
             });
-
-            // alert on slow connection
-            $.connection.hub.connectionSlow(function () {
-                showAlert(alert, 'We are currently experiencing difficulties with the SignalR connection');
-            });
-
-            // alert on connection error
-            $.connection.hub.error(function (error) {
-                showAlert(alert, 'SignalR error: ' + error);
-            });
         });
 
         function pushLog(table, log) {
             var ts = new Date(log.Timestamp);
             table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
             table.prepend('<tr class="active"><td>' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
-        }
-
-        function showAlert(alert, message) {
-            alert.find("p").text(message);
-            alert.show();
         }
     </script>
 }

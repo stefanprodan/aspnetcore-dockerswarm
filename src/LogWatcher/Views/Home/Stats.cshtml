@@ -77,24 +77,10 @@
                 showAlert(alert, 'Could not connect to SignalR hub');
             });
 
-            // alert on slow connection
-            $.connection.hub.connectionSlow(function () {
-                showAlert(alert, 'We are currently experiencing difficulties with the SignalR connection');
-            });
-
-            // alert on connection error
-            $.connection.hub.error(function (error) {
-                showAlert(alert, 'SignalR error: ' + error);
-            });
         });
 
         function pushHostStats(table, log) {
             table.append('<tr><td>' + log.Name + '</td><td>' + log.Trace + '</td><td>' + log.Debug + '</td><td>' + log.Information + '</td><td>' + log.Warning + '</td><td>' + log.Error + '</td><td>' + log.Critical + '</td></tr>');
-        }
-
-        function showAlert(alert, message) {
-            alert.find("p").text(message);
-            alert.show();
         }
     </script>
 }

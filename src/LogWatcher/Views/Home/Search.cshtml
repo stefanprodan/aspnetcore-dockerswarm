@@ -35,9 +35,6 @@
 <script>
     $(function () {
 
-        // enable SignalR logging
-        $.connection.hub.logging = true;
-
         // get generated proxy
         var logHubProxy = $.connection.logHub;
 
@@ -56,16 +53,7 @@
             showAlert(alert, 'Could not connect to SignalR hub');
         });
 
-        // alert on slow connection
-        $.connection.hub.connectionSlow(function () {
-            showAlert(alert, 'We are currently experiencing difficulties with the SignalR connection');
-        });
-
-        // alert on connection error
-        $.connection.hub.error(function (error) {
-            showAlert(alert, 'SignalR error: ' + error);
-        });
-
+        // do seach
         search.find("button").click(function () {
             var query = search.find("input").val();
             showAlert(alert, 'Searching...');
@@ -80,6 +68,7 @@
             showAlert(alert, 'Search execution time ' + (t1 - t0).toFixed(4) + 'ms');
         });
 
+        // do search on enter
         $(document.body).on('keyup', search.find("input"), function (event) {
             if (event.keyCode == 13) {
                 search.find("button").click();
@@ -91,11 +80,6 @@
         var ts = new Date(log.Timestamp);
         table.prepend('<tr><td colspan="6">' + log.Message + '</td><tr>');
         table.prepend('<tr class="active"><td>' + ts.toLocaleDateString() + ' ' + ts.toLocaleTimeString() + '</td><td>' + log.Level + '</td><td>' + log.Application + '</td><td>' + log.Host + '</td><td>' + log.Category + '</td><td>' + log.EventId + '</td></tr>');
-    }
-
-    function showAlert(alert, message) {
-        alert.find("p").text(message);
-        alert.show();
     }
 </script>
 }
