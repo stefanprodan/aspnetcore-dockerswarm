@@ -25,7 +25,7 @@ namespace LogWatcher
             var conn = _rethinkDbFactory.CreateConnection();
             var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
                 .Table("Logs")
-                .OrderBy()[new { index = R.Asc(nameof(LogEntry.Timestamp)) }]
+                .OrderBy()[new { index = R.Desc(nameof(LogEntry.Timestamp)) }]
                 .Limit(limit)
                 .RunCursor<LogEntry>(conn);
 
@@ -40,7 +40,7 @@ namespace LogWatcher
             var conn = _rethinkDbFactory.CreateConnection();
             var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
                 .Table("Logs")
-                .OrderBy()[new { index = R.Asc(nameof(LogEntry.Timestamp)) }]
+                .OrderBy()[new { index = R.Desc(nameof(LogEntry.Timestamp)) }]
                 .Filter(t => t.CoerceTo("string").Match($"(?i){query}"))
                 .Limit(limit)
                 .RunCursor<LogEntry>(conn);
@@ -62,7 +62,7 @@ namespace LogWatcher
 
             var stats = new List<LevelStats>();
 
-            foreach (var item in result)
+            foreach (var item in result.ToList())
             {
                 var host = item.Key[0];
                 var level = item.Key[1];
@@ -113,7 +113,7 @@ namespace LogWatcher
 
             var stats = new List<LevelStats>();
 
-            foreach (var item in result)
+            foreach (var item in result.ToList())
             {
                 var host = item.Key[0];
                 var level = item.Key[1];
@@ -151,22 +151,6 @@ namespace LogWatcher
             }
 
             return stats;
-        }
-
-        public dynamic HostStats()
-        {
-            var conn = _rethinkDbFactory.CreateConnection();
-            var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
-                .Table("Logs")
-                .Group()[new { index = nameof(LogEntry.Host) }]
-                .Count()
-                .RunGrouping<string, long>(conn);
-
-            return logs.Select(f => new {
-                Name = f.Key,
-                Total = f.Items.First()
-            });
-
         }
     }
 
