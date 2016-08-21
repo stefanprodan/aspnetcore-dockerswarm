@@ -32,11 +32,21 @@ namespace LogWatcher
 
             var conn = _rethinkDbFactory.CreateConnection();
             var feed = R.Db(_rethinkDbFactory.GetOptions().Database).Table("Logs").Changes().RunChanges<LogEntry>(conn);
-
-            foreach (var log in feed)
+            try
             {
-                hubContext.Clients.All.OnLog(log.NewValue);
+                foreach (var log in feed)
+                {
+                    hubContext.Clients.All.OnLog(log.NewValue);
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, $"Changefeed error {ex.Message}");
+
+                //TODO: retry limit
+                HandleUpdates();
+            }
+
 
             _logger.LogCritical($"Changefeed exited, connection is open {conn.Open}");
         }
