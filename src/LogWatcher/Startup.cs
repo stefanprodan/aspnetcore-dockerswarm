@@ -52,6 +52,8 @@ namespace LogWatcher
             services.AddSingleton<IRethinkDbConnectionFactory, RethinkDbConnectionFactory>();
             services.AddSingleton<IRethinkDbLoggerService, RethinkDbLoggerService>();
 
+            services.AddSingleton<RethinkDbKeepAlive>();
+
             // register changefeed service
             services.AddSingleton<LogChangeHandler>();
         }
@@ -60,7 +62,8 @@ namespace LogWatcher
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, 
             ILoggerFactory loggerFactory, 
             IRethinkDbLoggerService rethinkDbLoggerService, 
-            LogChangeHandler logChangeHandler)
+            LogChangeHandler logChangeHandler,
+            RethinkDbKeepAlive keepAlive)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -90,8 +93,11 @@ namespace LogWatcher
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            // try to avoid connection being dropped due to inactivity
+            Task.Factory.StartNew(keepAlive.Start, TaskCreationOptions.LongRunning);
+
             // run log watcher on a background thread
-            Task.Factory.StartNew(logChangeHandler.HandleUpdates, TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(logChangeHandler.Start, TaskCreationOptions.LongRunning);
 
             app.UseWebSockets();
             app.UseSignalR();

@@ -51,6 +51,7 @@ namespace LogWatcher
             {
                 _logger.LogError(1001, ex, $"DoSearch error {ex.Message}. Connection open {conn.Open}.");
 
+                conn.Close();
                 conn.Reconnect();
 
                 return DoSearch(query, limit, conn);
