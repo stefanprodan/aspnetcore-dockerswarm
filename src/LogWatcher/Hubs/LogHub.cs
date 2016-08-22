@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
@@ -14,10 +15,13 @@ namespace LogWatcher
     {
         private static RethinkDB R = RethinkDB.R;
         private readonly IRethinkDbConnectionFactory _rethinkDbFactory;
+        private readonly ILogger<LogHub> _logger;
 
-        public LogHub(IRethinkDbConnectionFactory rethinkDbFactory)
+        public LogHub(IRethinkDbConnectionFactory rethinkDbFactory,
+            ILogger<LogHub> logger)
         {
             _rethinkDbFactory = rethinkDbFactory;
+            _logger = logger;
         }
 
         public dynamic Load(int limit)
@@ -38,6 +42,24 @@ namespace LogWatcher
         public dynamic Search(string query, int limit)
         {
             var conn = _rethinkDbFactory.CreateConnection();
+
+            try
+            {
+                return DoSearch(query, limit, conn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, $"DoSearch error {ex.Message}. Connection open {conn.Open}.");
+
+                conn.Reconnect();
+
+                return DoSearch(query, limit, conn);
+            }
+        }
+
+        private List<LogEntry> DoSearch(string query, int limit, RethinkDb.Driver.Net.Connection conn)
+        {
+            var date = DateTime.UtcNow.AddDays(-1);
             var logs = R.Db(_rethinkDbFactory.GetOptions().Database)
                 .Table("Logs")
                 .OrderBy()[new { index = R.Desc(nameof(LogEntry.Timestamp)) }]
