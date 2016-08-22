@@ -65,13 +65,14 @@
                     });
                 });
                 logHubProxy.server.hostLogStats().then(function (logs) {
+
+                    var t1 = performance.now();
+                    showAlert(alert, 'Stats execution time ' + (t1 - t0).toFixed(4) + 'ms');
+
                     $.each(logs, function (idx, log) {
                         pushHostStats(hostTable, log);
                     });
                 });
-
-                var t1 = performance.now();
-                showAlert(alert, 'Stats execution time ' + (t1 - t0).toFixed(4) + 'ms');
 
             }).fail(function () {
                 showAlert(alert, 'Could not connect to SignalR hub');

@@ -59,13 +59,17 @@
             showAlert(alert, 'Searching...');
             table.find(`tr`).remove();
             var t0 = performance.now();
+
             logHubProxy.server.search(query, 50).then(function (logs) {
+
+                var t1 = performance.now();
+                showAlert(alert, 'Search execution time ' + (t1 - t0).toFixed(4) + 'ms');
+
                 $.each(logs, function (idx, log) {
                     pushLog(table, log);
                 });
             });
-            var t1 = performance.now();
-            showAlert(alert, 'Search execution time ' + (t1 - t0).toFixed(4) + 'ms');
+
         });
 
         // do search on enter
