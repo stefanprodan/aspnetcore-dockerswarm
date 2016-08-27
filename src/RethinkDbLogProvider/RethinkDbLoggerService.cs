@@ -24,6 +24,29 @@ namespace RethinkDbLogProvider
         public void Log(string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception)
         {
             var conn = _connectionFactory.CreateConnection();
+
+            try
+            {
+                InsertLog(conn, categoryName, logLevel, eventId, eventName, message, exception);
+            }
+            catch (Exception)
+            {
+                if(!conn.Open)
+                {
+                    conn.Reconnect();
+                }
+                else
+                {
+                    conn.Close();
+                    conn.Reconnect();
+                }
+
+                InsertLog(conn, categoryName, logLevel, eventId, eventName, message, exception);
+            }
+        }
+
+        private void InsertLog(RethinkDb.Driver.Net.Connection conn, string categoryName, string logLevel, int eventId, string eventName, string message, Exception exception)
+        {
             string exceptionId = null;
 
             if (exception != null)
