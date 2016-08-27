@@ -8,4 +8,4 @@ if(docker images -q logwatcher-img){
 }
 
 # create and start logwatcher service
-docker service create --publish 5005:5005 --name logwatcher --network backend-net logwatcher-img
+docker service create --publish 5005:5005 --mount type=bind,src=/c/users/docker/logwatcher,dst=/root/.aspnet/DataProtection-Keys --name logwatcher --network backend-net logwatcher-img
