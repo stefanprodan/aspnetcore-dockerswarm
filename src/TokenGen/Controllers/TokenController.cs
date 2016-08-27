@@ -23,9 +23,6 @@ namespace TokenGen.Controllers
         [HttpGet]
         public Token Get()
         {
-            _logger.LogInformation("Info");
-            _logger.LogWarning(new EventId(1, "TestEvent"), new Exception("Some ex"), "some message");
-
             var token = new Token
             {
                 Id = Guid.NewGuid().ToString(),
