@@ -52,26 +52,28 @@ namespace LogWatcher
             services.AddSingleton<IRethinkDbConnectionFactory, RethinkDbConnectionFactory>();
             services.AddSingleton<IRethinkDbLoggerService, RethinkDbLoggerService>();
 
+            // register keep alive and change feed services
             services.AddSingleton<RethinkDbKeepAlive>();
-
-            // register changefeed service
             services.AddSingleton<LogChangeHandler>();
+            services.AddSingleton<BackgroundTaskManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, 
             ILoggerFactory loggerFactory, 
-            IRethinkDbLoggerService rethinkDbLoggerService, 
-            LogChangeHandler logChangeHandler,
-            RethinkDbKeepAlive keepAlive)
+            IRethinkDbLoggerService rethinkDbLoggerService,
+            BackgroundTaskManager backgroundTaskManager)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            // enable RethinkDb driver logging 
-            loggerFactory.EnableRethinkDbLogging();
+            if (env.IsDevelopment())
+            {
+                // enable RethinkDb driver logging 
+                loggerFactory.EnableRethinkDbLogging();
+            }
 
-            // enable RethinkDb log provider for events 
+            // enable RethinkDb log provider
             loggerFactory.AddRethinkDb(rethinkDbLoggerService, LogLevel.Warning);
 
             if (env.IsDevelopment())
@@ -94,10 +96,10 @@ namespace LogWatcher
             });
 
             // try to avoid connection being dropped due to inactivity
-            Task.Factory.StartNew(keepAlive.Start, TaskCreationOptions.LongRunning);
+            backgroundTaskManager.StartKeepAlive();
 
             // run log watcher on a background thread
-            Task.Factory.StartNew(logChangeHandler.Start, TaskCreationOptions.LongRunning);
+            backgroundTaskManager.StartLogChangeFeed();
 
             app.UseWebSockets();
             app.UseSignalR();

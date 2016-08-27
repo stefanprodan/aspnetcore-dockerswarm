@@ -15,7 +15,6 @@ namespace LogWatcher
         private static RethinkDB R = RethinkDB.R;
         private readonly Microsoft.AspNetCore.SignalR.Infrastructure.IConnectionManager _signalManager;
         private readonly IRethinkDbConnectionFactory _rethinkDbFactory;
-        private readonly ILogger<LogChangeHandler> _logger;
         private RethinkDbOptions _options;
         private Connection _conn;
         private DateTime _lastLogTimestamp = DateTime.UtcNow.AddSeconds(-1);
@@ -23,46 +22,22 @@ namespace LogWatcher
 
         public LogChangeHandler(IRethinkDbConnectionFactory rethinkDbFactory, 
             IOptions<RethinkDbOptions> options,
-            ILogger<LogChangeHandler> logger,
             Microsoft.AspNetCore.SignalR.Infrastructure.IConnectionManager signalManager)
         {
             _rethinkDbFactory = rethinkDbFactory;
             _options = options.Value;
             _signalManager = signalManager;
-            _logger = logger;
-
-            //_conn = R.Connection()
-            //    .Hostname(_options.Host)
-            //    .Port(_options.Port)
-            //    .Timeout(_options.Timeout)
-            //    .Connect();
-
-            _logger.LogDebug(900, $"Changefeed watcher started.");
-        }
-
-        public void Start()
-        {
-            HandleUpdates();
-
-            _logger.LogCritical($"Changefeed exited, connection is open {_conn.Open}");
         }
 
         public void HandleUpdates()
         {
             try
             {
-                _logger.LogDebug(901, $"Changefeed HandleUpdates started. Retry count {_retyCount}");
-
                 _conn = _rethinkDbFactory.CreateConnection();
                 RunChangefeed();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogDebug(1001, ex, $"Changefeed error {ex.Message}. Connection open {_conn.Open}.");
-
-                _conn.Close();
-                _conn.Reconnect();
-
                 _retyCount++;
 
                 //TODO: retry limit
@@ -79,8 +54,6 @@ namespace LogWatcher
 
             foreach (var log in feed)
             {
-                _logger.LogDebug(902, $"SignalR push event {log.NewValue.Id}");
-
                 // push new value to SignalR hub
                 hubContext.Clients.All.OnLog(log.NewValue);
 

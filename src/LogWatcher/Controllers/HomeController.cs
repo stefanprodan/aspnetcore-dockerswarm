@@ -8,6 +8,12 @@ namespace LogWatcher.Controllers
 {
     public class HomeController : Controller
     {
+        public HomeController(BackgroundTaskManager backgroundTaskManager)
+        {
+            backgroundTaskManager.StartKeepAlive();
+            backgroundTaskManager.StartLogChangeFeed();
+        }
+
         public IActionResult Index()
         {
             return View();

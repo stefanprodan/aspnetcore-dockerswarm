@@ -24,6 +24,7 @@ namespace LogWatcher
 
         public void Start()
         {
+            bool firstCall = true;
             while (true)
             {
                 var conn = _rethinkDbFactory.CreateConnection();
@@ -34,7 +35,11 @@ namespace LogWatcher
                     //_logger.LogDebug(902, $"Connected to RethinkDB server {srv.Name}");
 
                     var result = R.Db(_rethinkDbFactory.GetOptions().Database).TableList().RunAtom<List<string>>(conn);
-                    _logger.LogDebug(902, $"Connected to RethinkDB server {_rethinkDbFactory.GetOptions().Host}");
+                    if (firstCall)
+                    {
+                        _logger.LogDebug(902, $"Connected to RethinkDB server {_rethinkDbFactory.GetOptions().Host}");
+                    }
+                    firstCall = false;
                 }
                 catch (Exception ex)
                 {
