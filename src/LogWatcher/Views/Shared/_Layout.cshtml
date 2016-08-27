@@ -51,10 +51,10 @@
 {
     public string GetClientIp()
     {
-        if(Context.Request.Headers.Keys.Contains("X-Real-IP", StringComparer.CurrentCultureIgnoreCase))
+        if(Context.Request.Headers.Keys.Contains("X-Forwarded-For", StringComparer.CurrentCultureIgnoreCase))
         {
 
-            return Context.Request.Headers["X-Real-IP"].First();
+            return Context.Request.Headers["X-Forwarded-For"].First();
         }
 
         return Context.Connection.RemoteIpAddress.ToString();
