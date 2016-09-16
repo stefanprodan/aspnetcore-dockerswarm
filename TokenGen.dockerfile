@@ -23,5 +23,7 @@ RUN ["dotnet", "build"]
 # Open port
 EXPOSE 5000/tcp
 
+HEALTHCHECK CMD curl --fail http://localhost:5000/api/healthcheck || exit 1
+
 # Run the app
 ENTRYPOINT ["dotnet", "run"]

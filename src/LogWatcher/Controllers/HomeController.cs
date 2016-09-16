@@ -8,8 +8,10 @@ namespace LogWatcher.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly BackgroundTaskManager _backgroundTaskManager;
         public HomeController(BackgroundTaskManager backgroundTaskManager)
         {
+            _backgroundTaskManager = backgroundTaskManager;
             backgroundTaskManager.StartKeepAlive();
             backgroundTaskManager.StartLogChangeFeed();
         }
@@ -32,6 +34,16 @@ namespace LogWatcher.Controllers
         public IActionResult Stats()
         {
             return View();
+        }
+
+        public IActionResult Healthcheck()
+        {
+            if (_backgroundTaskManager.IsConnected())
+            {
+                return new EmptyResult();
+            }
+
+            return StatusCode(500); 
         }
     }
 }

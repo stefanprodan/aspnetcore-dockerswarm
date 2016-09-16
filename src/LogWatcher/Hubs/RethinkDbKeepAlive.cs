@@ -51,5 +51,20 @@ namespace LogWatcher
                 Thread.Sleep(TimeSpan.FromSeconds(60));
             }
         }
+
+        public bool IsConnected()
+        {
+            try
+            {
+                var conn = _rethinkDbFactory.CreateConnection();
+                var result = R.Db(_rethinkDbFactory.GetOptions().Database).TableList().RunAtom<List<string>>(conn);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

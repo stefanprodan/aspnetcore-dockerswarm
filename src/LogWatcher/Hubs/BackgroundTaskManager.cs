@@ -58,5 +58,10 @@ namespace LogWatcher
                 });
             }
         }
+
+        public bool IsConnected()
+        {
+            return _keepAliveService.IsConnected();
+        }
     }
 }
