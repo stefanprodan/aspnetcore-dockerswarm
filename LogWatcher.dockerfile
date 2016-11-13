@@ -20,12 +20,15 @@ WORKDIR /app/src/LogWatcher
 RUN ["dotnet", "restore"]
 
 # Build the app
-RUN ["dotnet", "build"]
+RUN mkdir release && dotnet publish -c Release -o /app/src/LogWatcher/release
 
 # Open port
 EXPOSE 5005/tcp
 
 HEALTHCHECK CMD curl --fail http://localhost:5005/home/healthcheck || exit 1
 
+# Set working directory to release
+WORKDIR /app/src/LogWatcher/release
+
 # Run the app
-ENTRYPOINT ["dotnet", "run"]
+ENTRYPOINT ["dotnet", "LogWatcher.dll"]

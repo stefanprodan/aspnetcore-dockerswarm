@@ -18,12 +18,15 @@ WORKDIR /app/src/TokenGen
 RUN ["dotnet", "restore"]
 
 # Build the app
-RUN ["dotnet", "build"]
+RUN mkdir release && dotnet publish -c Release -o /app/src/TokenGen/release
 
 # Open port
 EXPOSE 5000/tcp
 
 HEALTHCHECK CMD curl --fail http://localhost:5000/api/healthcheck || exit 1
 
+# Set working directory to release
+WORKDIR /app/src/TokenGen/release
+
 # Run the app
-ENTRYPOINT ["dotnet", "run"]
+ENTRYPOINT ["dotnet", "TokenGen.dll"]
